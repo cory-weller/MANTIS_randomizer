@@ -1,0 +1,12 @@
+{
+    "name": "R",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": ".."
+    },
+    "runArgs": [ "-u", "vscode" ],
+    "settings": { 
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": []
+}
