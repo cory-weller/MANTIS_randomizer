@@ -26,7 +26,7 @@ library(foreach)
 library(readxl)
 
 
-randomize <- function(indt, n_wells=384) {
+randomize <- function(indt, n_wells) {
     samples <- copy(indt)
     setDT(samples)
     samples[, Group := rleid(Reagent, Volume)]
@@ -73,6 +73,7 @@ randomize <- function(indt, n_wells=384) {
     dt.final <- merge(dt, samples.expanded)[order(ID)]
 
     setcolorder(dt.final,  c('Well','Reagent','Volume','Sample','Row','Column','Plate','Group','replicate','ID'))
+    dt.final[, 'N_wells' := n_wells]
     return(dt.final)
 }
 
@@ -95,19 +96,26 @@ data_in <- reactive({
     )
 })
 
+nwells <- reactive({
+    req(input$nwells)
+    as.numeric(input$nwells)
+})
+
 data_out <- reactive({
-    dat.out <- randomize(data_in())
+    dat.out <- randomize(data_in(), nwells())
     return(dat.out)
 })
 
 
-output$uploadpreview <- renderDataTable(data_in(), extensions = 'Buttons', 
-                options = list(dom = 'Bfrtip',
+output$uploadpreview <- renderDataTable(data_in(), extensions = 'Buttons',
+                options = list(dom = 'Bfrti',
                 buttons = c('csv', 'excel'))
 )
-output$downloadpreview <- renderDataTable(data_out(), extensions = 'Buttons', 
-                options = list(dom = 'Bfrtip',
-                buttons = c('csv', 'excel'))
+output$downloadpreview <- renderDataTable(data_out(), extensions = 'Buttons', server = F,
+                options = list(dom = 'Bfrti',
+                                pageLength=1e6,
+                            buttons = c('csv', 'excel')
+                            )
 )
   
 }
