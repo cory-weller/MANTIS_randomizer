@@ -50,9 +50,14 @@ randomize <- function(indt, n_wells) {
     n_plates <- ceiling(nrow(df)/n_wells)
     forbiddenwells <- ''
     fixedwells <- ''
+    if(n_wells==96) {
+        use_dims <- list(8,12)
+    } else if(n_wells==384) {
+        use_dims <- list(16,24)
+    }
     a <- wrapperWPM(
         user_df=df,
-        plate_dims=list(8,12),
+        plate_dims=use_dims,
         nb_plates=n_plates,
         forbidden_wells=forbiddenwells,
         fixed_wells=fixedwells,
